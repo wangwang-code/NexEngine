@@ -1,0 +1,8 @@
+name: NexEngine
+main: su.nexmedia.engine.NexEngine
+version: 2.0.0
+description: NEX Plugin Engine
+author: NEX-Media
+softdepend: [Vault, WorldGuard, MythicMobs]
+api-version: 1.14
+load: STARTUP

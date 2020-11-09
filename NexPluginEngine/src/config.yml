@@ -1,0 +1,9 @@
+core:
+  lang: en
+  command-aliases: 'nexengine'
+
+locale:
+  world-names:
+    world: 'World'
+    world_nether: 'Nether'
+    world_the_end: 'The End'

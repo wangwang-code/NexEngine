@@ -1,0 +1,166 @@
+by: NightExpress, Integral-7, be2ON, MadNessa, Metal, lPariahl, Network
+
+====================[v2.0.0  - 09/11/2020]====================
+- Improved CommandRegister class. Now respects command permission.
+- Improved EditorManager class, merged from EditorUtils.
+- Improved Packet Engine event classes.
+- Improved HookManager class.
+- Improved Citizens hook.
+- Added missing editor messages to the locale config.
+- Added abstract Event templates.
+- Added variables to the time formats.
+- Optimized new user data creation.
+- Optimized Actions Manager.
+- Code refactor.
+====================[v1.9.9e - 03/11/2020]====================
+- Added 1.16.4 support.
+====================[v1.9.9e - 16/10/2020]====================
+- Added an ability to provide localized names for your worlds in config.
+====================[v1.9.9e - 13/10/2020]====================
+- Improved instant save option.
+====================[v1.9.9e - 12/10/2020]====================
+- Fixed another ChatComponent's Hex colors.
+# game updates sucks
+====================[v1.9.9e - 07/10/2020]====================
+- Fixed ChatComponent's Hex colors.
+====================[v1.9.9e - 06/10/2020]====================
+- Added BETA GUI Editor for the Actions Engine!
+- Minor fixes.
+====================[v1.9.9d - 18/09/2020]====================
+- Empty lang messages not being replaced by default values anymore.
+====================[v1.9.9d - 17/09/2020]====================
+- Added .colorHex method to StringUT class.
+====================[v1.9.9d - 16/09/2020]====================
+- Added .replace method to ItemUT class.
+====================[v1.9.9d - 10/09/2020]====================
+- Improved and fixed code.
+====================[v1.9.9c - 06/09/2020]====================
+- Fixed NMS 'colorFix' method wipes out all next text lines.
+- Added a sync method for instant user data save.
+====================[v1.9.9b - 04/09/2020]====================
+- Removed some useless things.
+====================[v1.9.9 - 18/08/2020]====================
+- Added config option for instant data saving. Child plugins
+  should care about this option themselves.
+- Added config option to force enable plugin user cache.
+  Use it if enabled instant data save option causes lags.
+====================[v1.9.9 - 14/08/2020]====================
+- Support for 1.16.2
+====================[v1.9.9 - 28/07/2020]====================
+- Fix #2 for lore unique colors in 1.16+.
+====================[v1.9.9 - 14/07/2020]====================
+- Fix #1 for ClickText colors in 1.16+.
+====================[v1.9.9 - 06/06/2020]====================
+- Fixed critical player group detection bug.
+====================[v1.9.9 - 04/06/2020]====================
+- Added global Citizens Hook for traits.
+====================[v1.9.9 - 02/06/2020]====================
+- Added '%GLOBAL%' placeholder for 'name' and 'lore' item
+  options for 'animation-frames' items.
+====================[v1.9.9 - 01/06/2020]====================
+- Refactor of Params in Custom Actions Engine. Optimized code.
+- Fixed GUI animation issues.
+====================[v1.9.9 - 29/05/2020]====================
+- Added 'filter' param to condition validators in Custom Actions Engine.
+  Allows you to define if targets that are not met the conditions should
+  be avoided, or if the whole action should be interrupted.
+- Target params 'entity-type' and 'entity-health' now are conditions.
+====================[v1.9.9 - 27/05/2020]====================
+- Added an ability to advertise your server via Statistics module.
+====================[v1.9.9 - 03/05/2020]====================
+- Statistic now updates every 12h to prevent server being
+purged if there was no restarts.
+====================[v1.9.9 - 27/04/2020]====================
+- Fixed Economy hooks.
+====================[v1.9.9 - 20/04/2020]====================
+- Improvements for player groups API.
+====================[v1.9.9 - 17/04/2020]====================
+- Fixed critical packet handler bug.
+====================[v1.9.9 - 12/04/2020]====================
+- A bit improved JGUI class.
+- Optimized ActionsManager, reduced RAM usage.
+====================[v1.9.9 - 30/03/2020]====================
+- Dropped 1.13 support.
+- Fixed purge() and getDatas() methods in DataHandler.
+- Improved JHook and HookManager classes.
+====================[v1.9.9 - 26/03/2020]====================
+- Started Core optimization.
+- Optimized setup of Config and Lang configs.
+- Optimized methods cfg() and lang().
+- Removed VersionUtils class. Version enum was moved to main package.
+- Optimized Core startup.
+- Optimized content of JYML class.
+- Removed unused methods.
+- Code clean up.
+====================[v1.9.0 - 04/03/2020]====================
+- Implemented experimental universal Custom Actions Engine.
+====================[v1.8.3 - 09/02/2020]====================
+- Improved JGUI class, removed item meta tags, added animation support.
+- Improved ClickText, MsgUT classes.
+- Fixed color codes for JSON messages with multi lines.
+====================[v1.8.2 - 08/02/2020]====================
+- Fixed Core hooks for the STARTUP loading.
+- Improved HookManager and Hooks classes.
+====================[v1.8.1 - 06/02/2020]====================
+- No more TabCompleter for not accessible commands.
+====================[v1.8.0 - 05/02/2020]====================
+- Added experimental universal DataHandler (SQLite, MySQL).
+- Added experimental universal UserManager.
+- Fixed a memory leak where offline loaded users in UserManager not being purged from the memory.
+====================[v1.7.7 - 31/01/2020]====================
+- Fixed server software detection.
+====================[v1.7.5 - 28/01/2020]====================
+- Improved CraftManager
+- Added auto recipe undiscovering on recipe unregister.
+====================[v1.5.1 - 18/01/2020]====================
+- New Statistics Module (Beta): Collect some data about the Fogus plugins.
+====================[v1.5.0 - 08/01/2020]====================
+- New Command Framework (Beta): Global commands + Sub commands. Allows to have more than 1 main plugin command.
+- Added global ModuleManager as well as internal modules support and new Command Framework.
+- Added folder with configs for Core plugin.
+- Refactor of ConfigManager class.
+- Refactor of JYML class.
+- Reordered util classes.
+- Removed useless libs and code parts.
+- Code improvements.
+====================[v1.4.2 - 07/01/2020]====================
+- Fixed possible JYML exceptions.
+====================[v1.4.1 - 21/12/2019]====================
+- Added PacketManager.
+====================[v1.4.0 - 15/11/2019]====================
+- Added 'core.prefix' config option to define plugin name.
+- Improved Config Manager.
+- Improved Language Manager.
+- Reduced memory usage.
+====================[v1.3.1 - Technical]====================
+- Fixed JGUI user cache. [01/11/2019]
+- Improved HookManager [28/10/2019]
+- Added constant string NONE. [22/10/2019 18:39]
+- Added reload() method for JYML class. [22/10/2019 18:12] [OK]
+====================[v1.3.0 - 21/08/2019]====================
+- New GUI Framework V3!
+- Better GUI Handlers.
+- Better Editor Handlers.
+- Performance boost.
+- Decreased CPU and RAM usage.
+====================[v1.2.5 - 19/08/2019]====================
+- Improved HookManager and Core hooks.
+- Performance improved.
+- Fixed VersionUtils.
+====================[v1.2.3 - 17/06/2019]====================
+- Added JetBrains annotations
+- Fixed getNMSClass Reflex method.
+====================[v1.2.2 - 04/06/2019]====================
+- Added ArrayUT utility class.
+====================[v1.1.7 - 16/04/2019]====================
+- Custom recipe API
+====================[v1.1.3 - 09/04/2019]====================
+- Refactor of HookManager.
+====================[v1.1.2 - 08/04/2019]====================
+- Added NMS methods.
+- Improved Random Utils.
+====================[v1.1.1 - 07/04/2019]====================
+- Added 'Hooks' class.
+- Improved HookManager work.
+- Improved WorldGuard Damage check.
+- Improved Reflex class.
