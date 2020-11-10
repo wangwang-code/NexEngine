@@ -28,8 +28,10 @@ import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.config.api.JYML;
 import su.nexmedia.engine.manager.IListener;
 import su.nexmedia.engine.manager.api.task.ITask;
+import su.nexmedia.engine.manager.types.ClickType;
 import su.nexmedia.engine.utils.ItemUT;
 import su.nexmedia.engine.utils.StringUT;
+import su.nexmedia.engine.utils.actions.ActionManipulator;
 
 public abstract class NGUI <P extends NexPlugin<P>> extends IListener<P> implements InventoryHolder {
 
@@ -261,7 +263,7 @@ public abstract class NGUI <P extends NexPlugin<P>> extends IListener<P> impleme
 		String id = VALUE_USER_ID + p.getName() + this.items.size();
 		ItemStack item = icon.build();
 		
-		GuiItem guiItem = new GuiItem(id, null, item, false, 0, new TreeMap<>(), null, slots);
+		GuiItem guiItem = new GuiItem(id, null, item, false, 0, new TreeMap<>(), new HashMap<>(), null, slots);
 		guiItem.setClick(icon.getClick());
 		
 		Map<Integer, String> userMap = this.getUserContent(p);
@@ -420,6 +422,13 @@ public abstract class NGUI <P extends NexPlugin<P>> extends IListener<P> impleme
 		
 		Enum<?> type = guiItem.getType();
 		guiItem.click(p, type, e);
+		
+		// Execute custom user actions when click button.
+		ClickType clickType = ClickType.from(e);
+		ActionManipulator actions = guiItem.getCustomClick(clickType);
+		if (actions != null) {
+			actions.process(p);
+		}
 	}
 	
 	protected void onClose(@NotNull Player p, @NotNull InventoryCloseEvent e) {

@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -32,11 +34,13 @@ import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.manager.api.gui.ContentType;
 import su.nexmedia.engine.manager.api.gui.GuiItem;
+import su.nexmedia.engine.manager.types.ClickType;
 import su.nexmedia.engine.utils.CollectionsUT;
 import su.nexmedia.engine.utils.FileUT;
 import su.nexmedia.engine.utils.ItemUT;
 import su.nexmedia.engine.utils.LocUT;
 import su.nexmedia.engine.utils.StringUT;
+import su.nexmedia.engine.utils.actions.ActionManipulator;
 import su.nexmedia.engine.utils.constants.JStrings;
 import su.nexmedia.engine.utils.craft.objects.NCraftRecipe;
 import su.nexmedia.engine.utils.craft.objects.NFurnaceRecipe;
@@ -326,10 +330,23 @@ public class JYML extends YamlConfiguration {
 			id = f.getName().replace(".yml", "") + "-icon-" + Rnd.get(0, 3000);
 		}
 		
+		Map<ClickType, ActionManipulator> customClicks = new HashMap<>();
+		for (String sType : this.getSection(path + "custom-actions")) {
+			ClickType clickType = CollectionsUT.getEnum(sType, ClickType.class);
+			if (clickType == null) continue;
+			
+			ActionManipulator actions = new ActionManipulator(NexEngine.get(), this, path + "custom-actions." + sType);
+			customClicks.put(clickType, actions);
+		}
+		
 		String permission = this.getString(path + "permission");
 		
-		GuiItem gi = new GuiItem(id, type, item, animAutoPlay, animStartFrame, animFrames, permission, slots);
-		return gi;
+		GuiItem guiItem = new GuiItem(
+				id, type, item, 
+				animAutoPlay, animStartFrame, animFrames, 
+				customClicks, permission, slots);
+		
+		return guiItem;
 	}
 	
 	public void setItem(@NotNull String path, @Nullable ItemStack item) {

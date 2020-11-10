@@ -2,6 +2,7 @@ package su.nexmedia.engine.manager.api.gui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -11,6 +12,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import su.nexmedia.engine.manager.types.ClickType;
+import su.nexmedia.engine.utils.actions.ActionManipulator;
 
 public class GuiItem {
 
@@ -25,6 +29,7 @@ public class GuiItem {
 	private String permission;
 	private int[] slots;
 	private GuiClick click;
+	private Map<ClickType, ActionManipulator> customClicks;
 	
 	public GuiItem(
 			@NotNull String id,
@@ -34,6 +39,7 @@ public class GuiItem {
 			boolean animAutoPlay,
 			int animStartFrame,
 			@NotNull TreeMap<Integer, ItemStack> animFrames,
+			@NotNull Map<ClickType, ActionManipulator> customClicks,
 			
 			@Nullable String permission,
 			int[] slots
@@ -53,6 +59,7 @@ public class GuiItem {
 			this.animFrames.put(e.getKey(), frame);
 		}
 		
+		this.setCustomClicks(customClicks);
 		this.setPermission(permission);
 	}
 	
@@ -65,6 +72,8 @@ public class GuiItem {
 			from.isAnimationAutoPlay(), 
 			from.getAnimationStartFrame(), 
 			from.getAnimationFrames(), 
+			
+			from.getCustomClicks(),
 			
 			from.getPermission(),
 			from.getSlots()
@@ -199,6 +208,20 @@ public class GuiItem {
 	
 	public boolean hasPermission(@NotNull Player p) {
 		return this.permission == null || p.hasPermission(this.permission);
+	}
+	
+	@NotNull
+	public Map<ClickType, ActionManipulator> getCustomClicks() {
+		return this.customClicks;
+	}
+	
+	public void setCustomClicks(@NotNull Map<ClickType, ActionManipulator> customClicks) {
+		this.customClicks = customClicks;
+	}
+	
+	@Nullable
+	public ActionManipulator getCustomClick(@NotNull ClickType clickType) {
+		return this.getCustomClicks().get(clickType);
 	}
 	
 	@Nullable
