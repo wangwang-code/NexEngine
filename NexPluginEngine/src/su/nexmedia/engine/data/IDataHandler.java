@@ -18,6 +18,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.sqlite.JDBC;
@@ -26,6 +27,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import su.nexmedia.engine.NexPlugin;
+import su.nexmedia.engine.data.serial.ItemStackSerializer;
 import su.nexmedia.engine.data.users.IAbstractUser;
 
 public abstract class IDataHandler<P extends NexPlugin<P>, U extends IAbstractUser<P>> {
@@ -46,7 +48,8 @@ public abstract class IDataHandler<P extends NexPlugin<P>, U extends IAbstractUs
     protected static final String COL_USER_UUID = "uuid";
     protected static final String COL_USER_NAME = "name";
     protected static final String COL_USER_LAST_ONLINE = "last_online";
-    // TODO Add Ip column?
+    
+    private static final ItemStackSerializer ITEM_SERIALIZER = new ItemStackSerializer();
     
 	protected IDataHandler(@NotNull P plugin) throws SQLException {
 		this.plugin = plugin;
@@ -120,8 +123,9 @@ public abstract class IDataHandler<P extends NexPlugin<P>, U extends IAbstractUs
 
 	@NotNull
 	protected GsonBuilder registerAdapters(@NotNull GsonBuilder builder) {
-		// TODO Register for item stack and location?
-		return builder;
+		// TODO Register for  location?
+		return builder
+				.registerTypeAdapter(ItemStack.class, ITEM_SERIALIZER);
 	}
 
 	@NotNull
@@ -173,16 +177,15 @@ public abstract class IDataHandler<P extends NexPlugin<P>, U extends IAbstractUs
 		this.execute(sql.toString());
 	}
 	
-	protected void renameTable(@NotNull String from) {
+	protected void renameTable(@NotNull String from, @NotNull String to) {
 		if (!this.hasTable(from)) return;
 		
 		StringBuilder sql = new StringBuilder();
 		if (this.dataType == StorageType.MYSQL) {
-			sql.append("RENAME TABLE ").append(from).append(" TO ")
-				.append(this.TABLE_USERS).append(";");
+			sql.append("RENAME TABLE ").append(from).append(" TO ").append(to).append(";");
 		}
 		else {
-			sql.append("ALTER TABLE ").append(from).append(" RENAME TO ").append(this.TABLE_USERS);
+			sql.append("ALTER TABLE ").append(from).append(" RENAME TO ").append(to);
 		}
 		this.execute(sql.toString());
 	}
@@ -235,36 +238,6 @@ public abstract class IDataHandler<P extends NexPlugin<P>, U extends IAbstractUs
 			e.printStackTrace();
 	        return false;
 	    }
-	}
-
-	protected void transferOldData(@NotNull String tableFrom) {
-		this.transferOldData(tableFrom, TABLE_USERS);
-	}
-	
-	protected void transferOldData(@NotNull String tableFrom, @NotNull String tableTo) {
-		if (!this.hasTable(tableFrom)) return;
-		
-		StringBuilder sql = new StringBuilder("INSERT INTO " + tableTo + "(");
-		
-		List<String> keys = new ArrayList<>();
-		keys.add(COL_USER_UUID);
-		keys.add(COL_USER_NAME);
-		keys.add(COL_USER_LAST_ONLINE);
-		keys.addAll(this.getColumnsToCreate().keySet());
-		
-		StringBuilder columns = new StringBuilder();
-		keys.forEach((key) -> {
-			if (columns.length() > 0) {
-				columns.append(", ");
-			}
-			columns.append("`" + key + "`");
-		});
-		sql.append(columns.toString());
-		sql.append(") SELECT ").append(columns.toString()).append(" FROM ").append(tableFrom).append(";");
-		
-		this.execute(sql.toString());
-		
-		this.execute("DROP TABLE IF EXISTS " + tableFrom);
 	}
 
 	protected void addData(@NotNull String table, @NotNull LinkedHashMap<String, String> keys) {
@@ -409,7 +382,7 @@ public abstract class IDataHandler<P extends NexPlugin<P>, U extends IAbstractUs
 			int days = (int) ((diff / (1000*60*60*24)) % 7);
 			
 			if (days >= plugin.cfg().dataPurgeDays) {
-				this.delete(user.getUUID().toString());
+				this.deleteUser(user.getUUID().toString());
 				count++;
 			}
 		}
@@ -433,8 +406,8 @@ public abstract class IDataHandler<P extends NexPlugin<P>, U extends IAbstractUs
     }
     
 	@Nullable
-    public U getUser(@NotNull Player p) {
-		return this.getUser(p.getUniqueId());
+    public U getUser(@NotNull Player player) {
+		return this.getUser(player.getUniqueId());
 	}
 	
 	@Nullable
@@ -454,11 +427,11 @@ public abstract class IDataHandler<P extends NexPlugin<P>, U extends IAbstractUs
     	return this.getData(this.TABLE_USERS, whereMap, this.getFunctionToUser());
     }
     
-    public boolean isExists(@NotNull String uuid, boolean uid) {
+    public boolean isUserExists(@NotNull String uuid, boolean uid) {
     	return this.getUser(uuid, uid) != null;
     }
     
-    public void save(@NotNull U user) {
+    public void saveUser(@NotNull U user) {
     	LinkedHashMap<String, String> colMap = new LinkedHashMap<>();
     	colMap.put(COL_USER_NAME, user.getName());
     	colMap.put(COL_USER_LAST_ONLINE, String.valueOf(user.getLastOnline()));
@@ -472,8 +445,8 @@ public abstract class IDataHandler<P extends NexPlugin<P>, U extends IAbstractUs
     	this.saveData(this.TABLE_USERS, colMap, whereMap);
     }
     
-    public void add(@NotNull U user) {
-    	if (this.isExists(user.getUUID().toString(), true)) return;
+    public void addUser(@NotNull U user) {
+    	if (this.isUserExists(user.getUUID().toString(), true)) return;
     	
     	LinkedHashMap<String, String> colMap = new LinkedHashMap<>();
     	colMap.put(COL_USER_UUID, user.getUUID().toString());
@@ -485,7 +458,7 @@ public abstract class IDataHandler<P extends NexPlugin<P>, U extends IAbstractUs
     	this.addData(this.TABLE_USERS, colMap);
     }
 	
-    public void delete(@NotNull String uuid) {
+    public void deleteUser(@NotNull String uuid) {
     	String sql = "DELETE FROM " + TABLE_USERS + " WHERE `uuid` = '" + uuid + "'";
     	this.execute(sql);
     }

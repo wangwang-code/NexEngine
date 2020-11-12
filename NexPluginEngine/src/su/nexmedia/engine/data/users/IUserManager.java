@@ -18,10 +18,10 @@ import org.jetbrains.annotations.Nullable;
 
 import su.nexmedia.engine.NexDataPlugin;
 import su.nexmedia.engine.hooks.Hooks;
-import su.nexmedia.engine.manager.IListener;
+import su.nexmedia.engine.manager.IManager;
 import su.nexmedia.engine.manager.api.task.ITask;
 
-public abstract class IUserManager<P extends NexDataPlugin<P, U>, U extends IAbstractUser<P>> extends IListener<P> {
+public abstract class IUserManager<P extends NexDataPlugin<P, U>, U extends IAbstractUser<P>> extends IManager<P> {
 
 	private Map<String, U> activeUsers;
 	private Set<@NotNull U> toSave;
@@ -31,6 +31,7 @@ public abstract class IUserManager<P extends NexDataPlugin<P, U>, U extends IAbs
 		super(plugin);
 	}
 	
+	@Override
 	public void setup() {
 		this.activeUsers = new HashMap<>();
 		this.toSave = ConcurrentHashMap.newKeySet();
@@ -40,6 +41,7 @@ public abstract class IUserManager<P extends NexDataPlugin<P, U>, U extends IAbs
 		this.saveTask.start();
 	}
 	
+	@Override
 	public void shutdown() {
 		if (this.saveTask != null) {
 			this.saveTask.stop();
@@ -67,12 +69,12 @@ public abstract class IUserManager<P extends NexDataPlugin<P, U>, U extends IAbs
 				cacheFixCount++;
 				continue;
 			}
-			this.plugin.getData().save(userOn);
+			this.plugin.getData().saveUser(userOn);
 		}
 		
 		int on = this.activeUsers.size();
 		int off = this.toSave.size();
-		this.toSave.forEach(userOff -> this.plugin.getData().save(userOff));
+		this.toSave.forEach(userOff -> this.plugin.getData().saveUser(userOff));
 		this.toSave.clear();
 		
 		plugin.info("Auto-save: Saved " + on + " online users | " + off + " offline users.");
@@ -92,19 +94,19 @@ public abstract class IUserManager<P extends NexDataPlugin<P, U>, U extends IAbs
 	}
 	
 	public void save(@NotNull U user) {
-		this.plugin.getData().save(user);
+		this.plugin.getData().saveUser(user);
 	}
 	
 	@NotNull
-	protected abstract U createData(@NotNull Player p);
+	protected abstract U createData(@NotNull Player player);
 	
 	@NotNull
-	public U getOrLoadUser(@NotNull Player p) {
-		if (Hooks.isNPC(p)) {
+	public U getOrLoadUser(@NotNull Player player) {
+		if (Hooks.isNPC(player)) {
 			throw new IllegalStateException("Could not load user data from an NPC!");
 		}
 		
-		@Nullable U user = this.getOrLoadUser(p.getUniqueId().toString(), true);
+		@Nullable U user = this.getOrLoadUser(player.getUniqueId().toString(), true);
 		if (user == null) {
 			throw new IllegalStateException("Could not load user data from an online player!");
 		}
@@ -160,14 +162,14 @@ public abstract class IUserManager<P extends NexDataPlugin<P, U>, U extends IAbs
 		
 		this.plugin.info("Created new user data for: '" + uuid + "'");
 		this.plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-			this.plugin.getData().add(user2);
+			this.plugin.getData().addUser(user2);
 		});
 		this.activeUsers.put(uuid, user2);
 		return user2;
 	}
 	
-	public final void unloadUser(@NotNull Player p) {
-		String uuid = p.getUniqueId().toString();
+	public final void unloadUser(@NotNull Player player) {
+		String uuid = player.getUniqueId().toString();
 		@Nullable U user = this.activeUsers.get(uuid);
 		if (user == null) return;
 		
@@ -217,7 +219,7 @@ public abstract class IUserManager<P extends NexDataPlugin<P, U>, U extends IAbs
 	
 	class SaveTask extends ITask<P> {
 
-		public SaveTask(@NotNull P plugin) {
+		SaveTask(@NotNull P plugin) {
 			super(plugin, plugin.cfg().dataSaveInterval * 60, true);
 		}
 
