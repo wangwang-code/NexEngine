@@ -56,8 +56,7 @@ public class ClickText {
 		// Support for full line the single ClickText
 		ClickWord full = this.replacers.get(JStrings.MASK_ANY);
 		if (full != null) {
-			this.builder.append(TextComponent.fromLegacyText(full.getText()))
-			.event(full.getClickEvent()).event(full.getHoverEvent());
+			this.builder.append(full.build());//.event(full.getClickEvent()).event(full.getHoverEvent());
 			return this.builder.create();
 		}
 		
