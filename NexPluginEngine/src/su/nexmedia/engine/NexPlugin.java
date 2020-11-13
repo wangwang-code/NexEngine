@@ -70,7 +70,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
 			this.warn("============== DISCLAIMER ==============");
 			this.warn("> You're running an unknown Spigot fork.");
 			this.warn("> This plugin is designed to work on Spigot (spigotmc.org) only!");
-			this.warn("> You won't get any support for any issues unless they are persists on regular Spigot.");
+			this.warn("> You won't get any support for any issues unless they persist on regular Spigot.");
 			this.warn("========================================");
 		}
 		
